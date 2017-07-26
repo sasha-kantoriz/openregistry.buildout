@@ -8,6 +8,7 @@ __pycache__/
 # Distribution / packaging
 .Python
 env/
+etc/
 build/
 develop-eggs/
 dist/
@@ -52,9 +53,14 @@ docs/_build/
 
 # PyBuilder
 target/
+.mr.developer.cfg
 
 # Buildout
 bin/
+src/
 
 cover/
 output.html
+
+# pyenv
+.python-version
