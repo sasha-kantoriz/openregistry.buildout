@@ -58,9 +58,12 @@ target/
 # Buildout
 bin/
 src/
+/buildout.cfg
 
 cover/
 output.html
 
 # pyenv
 .python-version
+
+/setup.cfg
