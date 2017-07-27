@@ -6,16 +6,16 @@ Follow the instructions:
   1. Bootstrap the buildout with Python 2.7:
 
      ```
-     $ python bootstrap.py
+     $ python bootstrap.py --setuptools-version 36.0.1 --buildout-version 2.9.4
      ```
 
   2. Build the buildout:
 
       ```
-      $ bin/buildout -N
+      $ bin/buildout
       ```
 
-System requirements (fedora 22):
+System requirements (fedora >=25):
 
     dnf install gcc file git libevent-devel python-devel sqlite-devel zeromq-devel libffi-devel openssl-devel systemd-python
 
