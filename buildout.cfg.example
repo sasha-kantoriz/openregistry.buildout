@@ -1,6 +1,8 @@
 [buildout]
 extends =
     profiles/development.cfg
+parts +=
+    test
 
 [openregistry.api.ini]
 couchdb_db = test
