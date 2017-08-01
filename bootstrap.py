@@ -1,3 +1,9 @@
+# -------------------  ATTENTION!!!  -----------------------------
+#
+# It is a custom (Quintagroup) bootstrap.py.
+# It sets version of setuptools to 36.0.1 and version of zc.buildout to 2.9.4
+# if other isn't pointed out.
+#
 ##############################################################################
 #
 # Copyright (c) 2006 Zope Foundation and Contributors.
@@ -72,6 +78,17 @@ parser.add_option("--setuptools-to-dir",
                         "setuptools versions"))
 
 options, args = parser.parse_args()
+
+######################################################################
+# Custom (Quintagroup) lines
+
+options.setuptools_version = options.setuptools_version or '36.0.1'
+options.buildout_version = options.buildout_version or '2.9.4'
+
+# end custom lines
+######################################################################
+
+
 if options.version:
     print("bootstrap.py version %s" % __version__)
     sys.exit(0)

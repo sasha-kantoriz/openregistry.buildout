@@ -6,7 +6,7 @@ Follow the instructions:
   1. Bootstrap the buildout with Python 2.7:
 
      ```
-     $ python bootstrap.py --setuptools-version 36.0.1 --buildout-version 2.9.4
+     $ python bootstrap.py
      ```
 
   2. Build the buildout:
