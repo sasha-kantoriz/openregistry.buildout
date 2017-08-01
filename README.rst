@@ -27,7 +27,12 @@ To start environment services:
 
     bin/circusd --daemon
 
-To to run openregistry.api instance:
+To run openregistry.api instance:
 
     bin/pserve etc/openregistry.api.ini
 
+Run the following command
+
+    bin/python run_tests.py
+
+to run all tests from all dependency packages.
