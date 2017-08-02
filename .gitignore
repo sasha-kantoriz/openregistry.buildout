@@ -67,3 +67,6 @@ output.html
 .python-version
 
 /setup.cfg
+
+docs/make.bat
+docs/Makefile
