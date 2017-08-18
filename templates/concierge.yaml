@@ -1,0 +1,21 @@
+---
+db:
+ host:  ${options['db_host']}
+ name:  ${options['db_name']}
+ port: ${options['db_port']}
+ login: ${options['db_login']}
+ password: ${options['db_password']}
+ filter: "lots/status"
+time_to_sleep: ${options['time_to_sleep']}
+
+lots:
+  api:
+    url: ${options['lots_url']}
+    token: ${options['lot_secret_token']}
+    version:  ${options['lots_api_version']}
+
+assets:
+  api:
+    url: ${options['assets_url']}
+    token: ${options['assets_secret_token']}
+    version: ${options['assets_api_version']}
