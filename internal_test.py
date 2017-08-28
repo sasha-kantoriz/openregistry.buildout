@@ -2,14 +2,14 @@
 import unittest
 import time
 
-from openprocurement_client.registry_client import RegistryClient
+from openprocurement_client.registry_client import LotsClient, AssetsClient, APIBaseClient
 
 
 # Config with info about API
 config = {
-    "url": "",
-    "version": 0.1,
-    "token": ""
+    "url": "https://lb.api-sandbox.registry.ea.openprocurement.net",
+    "version": 0,
+    "token": "b31ef66eabcc44e3b5a5347b57539f49"
 }
 
 # Data for test
@@ -31,6 +31,30 @@ test_Custodian = {
         "name": u"Державне управління справами",
         "telephone": u"0440000000"
     }
+}
+
+test_procuringEntity = test_Custodian.copy()
+test_auction_data = {
+    "title": u"футляри до державних нагород",
+    "dgfID": u"219560",
+    "dgfDecisionDate": u"2016-11-17",
+    "dgfDecisionID": u"219560",
+    "tenderAttempts": 1,
+    "procuringEntity": test_procuringEntity,
+    "status": "pending.verification",
+    "value": {
+        "amount": 100,
+        "currency": u"UAH"
+    },
+    "minimalStep": {
+        "amount": 35,
+        "currency": u"UAH"
+    },
+    "auctionPeriod": {
+        "startDate": "2017-08-22T16:40:37.363793+03:00"
+    },
+    "procurementMethodType": "dgfOtherAssets",
+    "procurementMethodDetails": 'quick, accelerator=1440'
 }
 
 test_asset_data = {
