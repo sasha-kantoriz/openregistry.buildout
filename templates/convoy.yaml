@@ -1,0 +1,58 @@
+---
+  timeout: ${options['timeout']}
+  transmitter_timeout: ${options['transmitter_timeout']}
+  couchdb:
+    user: ${options['db_login']}
+    password: ${options['db_password']}
+    host: ${options['db_host']}
+    port: ${options['db_port']}
+    db: ""
+  cdb_ds:
+    host_url: "${options['auctions_ds_url']}"
+    auth_ds: ["${options['auctions_ds_login']}", "${options['auctions_ds_password']}"]
+  cdb:
+    key: "${options['auctions_api_key']}"
+    host_url: "${options['auctions_url']}"
+    api_version: ${options['auctions_api_version']}
+    resource: "auctions"
+    user_agent: "${options['auctions_agent']}"
+  lots_db:
+    key: "${options['lots_api_key']}"
+    host_url: "${options['lots_url']}"
+    api_version: ${options['lots_api_version']}
+    resource: "lots"
+    user_agent: "${options['lots_agent']}"
+  assets_db:
+    key: "${options['assets_api_key']}"
+    host_url: "${options['assets_url']}"
+    api_version: ${options['assets_api_version']}
+    resource: "assets"
+    user_agent: "${options['assets_agent']}"
+  version: 1
+
+  formatters:
+    simple:
+      format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+
+  handlers:
+    console:
+      class: logging.StreamHandler
+      level: INFO
+      formatter: simple
+      stream: ext://sys.stdout
+
+
+  loggers:
+    openregistry.convoy.convoy:
+      handlers: [console]
+      propagate: no
+      level: DEBUG
+
+    openregistry.convoy.utils:
+      handlers: [console]
+      propagate: no
+      level: DEBUG
+
+    "":
+      handlers: [console]
+      level: DEBUG
