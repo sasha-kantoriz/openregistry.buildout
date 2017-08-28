@@ -4,3 +4,7 @@ extends =
 
 [openregistry.api.ini]
 couchdb_db = test
+
+[circus.ini]
+auctions_databridge = True
+convoy = True
