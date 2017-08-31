@@ -9,7 +9,10 @@ from openprocurement_client.registry_client import LotsClient, AssetsClient, API
 config = {
     "url": "https://lb.api-sandbox.registry.ea.openprocurement.net",
     "version": 0,
-    "token": ""
+    "token": "",
+    "auction_url": "https://lb.api-sandbox.ea.openprocurement.org",
+    "auction_token": "",
+    "auction_version": 2.5
 }
 
 # Data for test
@@ -51,9 +54,9 @@ test_auction_data = {
         "currency": u"UAH"
     },
     "auctionPeriod": {
-        "startDate": "2017-08-22T16:40:37.363793+03:00"
+        "startDate": "2017-08-28T19:20:37.363793+03:00"
     },
-    "procurementMethodType": "dgfOtherAssets",
+    "procurementMethodType": "dgfInsider",
     "procurementMethodDetails": 'quick, accelerator=1440'
 }
 
@@ -118,9 +121,9 @@ class ConciergeTest(unittest.TestCase):
         )
         self.auctions_client = APIBaseClient(
             resource="auctions",
-            key="",
-            host_url="https://lb.api-sandbox.ea.openprocurement.org",
-            api_version="2.5"
+            key=config['auction_token'],
+            host_url=config['auction_url'],
+            api_version=config['auction_version']
         )
 
     def test_01_concierge(self):
@@ -210,35 +213,6 @@ class ConciergeTest(unittest.TestCase):
 
         print "Concierge move lot to active.salable and assets to active!"
 
-        # Move lot to dissolved status ========================================
-        self.lots_client.patch_resource_item({
-            "access": {
-                "token": lot.access.token
-            },
-            "data": {
-                "id": lot.data.id,
-                "status": "dissolved"
-            }
-        })
-        lot_status = self.lots_client.get_lot(lot.data.id).data.status
-        self.assertEqual(lot_status, "dissolved")
-        print "Successfully move lot {} to dissolved".format(lot.data.id)
-
-        # Check assets status
-
-        print "Waiting for Concierge ..."
-        for i in range(15):
-            time.sleep(i)  # Waiting for concierge
-            upd_asset = self.assets_client.get_asset(assets[0].data.id).data
-
-            if upd_asset.status != "active":
-                break
-
-        for asset in assets:
-            upd_asset = self.assets_client.get_asset(asset.data.id).data
-            self.assertEqual(upd_asset.status, "pending")
-
-        print "Concierge has done his work!"
 
         test_auction_data['merchandisingObject'] = lot.data.id
 
@@ -260,7 +234,37 @@ class ConciergeTest(unittest.TestCase):
         upd_auction = self.auctions_client.get_resource_item(auction.data.id).data
         self.assertEqual(upd_auction.status, "active.tendering")
 
-        print "Convoy has done his work!"
+        # print "Convoy has done his work!"
+        #
+        # # Move lot to dissolved status ========================================
+        # self.lots_client.patch_resource_item({
+        #     "access": {
+        #         "token": lot.access.token
+        #     },
+        #     "data": {
+        #         "id": lot.data.id,
+        #         "status": "dissolved"
+        #     }
+        # })
+        # lot_status = self.lots_client.get_lot(lot.data.id).data.status
+        # self.assertEqual(lot_status, "dissolved")
+        # print "Successfully move lot {} to dissolved".format(lot.data.id)
+        #
+        # # Check assets status
+        #
+        # print "Waiting for Concierge ..."
+        # for i in range(15):
+        #     time.sleep(i)  # Waiting for concierge
+        #     upd_asset = self.assets_client.get_asset(assets[0].data.id).data
+        #
+        #     if upd_asset.status != "active":
+        #         break
+        #
+        # for asset in assets:
+        #     upd_asset = self.assets_client.get_asset(asset.data.id).data
+        #     self.assertEqual(upd_asset.status, "pending")
+        #
+        # print "Concierge has done his work!"
 
 if __name__ == '__main__':
     unittest.main()
