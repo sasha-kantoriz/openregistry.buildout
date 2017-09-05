@@ -6,6 +6,7 @@ db:
  login: ${options['db_login']}
  password: ${options['db_password']}
  filter: "lots/status"
+errors_doc: ${options['errors_doc']}
 time_to_sleep: ${options['time_to_sleep']}
 
 lots:
