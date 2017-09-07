@@ -8,3 +8,5 @@ couchdb_db = test
 [circus.ini]
 auctions_databridge = True
 convoy = True
+# For receiving monitoring data in statsd use statsd_plugin = True
+statsd_plugin = True
