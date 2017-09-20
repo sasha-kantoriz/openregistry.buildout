@@ -2,16 +2,17 @@
 import unittest
 import time
 
-from openprocurement_client.registry_client import LotsClient, AssetsClient, APIBaseClient
-
+from openprocurement_client.resources.assets import AssetsClient
+from openprocurement_client.resources.lots import LotsClient
+from openprocurement_client.clients import APIResourceClient
 
 # Config with info about API
 config = {
     "url": "https://lb.api-sandbox.registry.ea.openprocurement.net",
     "version": 0,
-    "token": "",
+    "token": "b31ef66eabcc44e3b5a5347b57539f49",
     "auction_url": "https://lb.api-sandbox.ea.openprocurement.org",
-    "auction_token": "",
+    "auction_token": "e9c3ccb8e8124f26941d5f9639a4ebc3",
     "auction_version": 2.5
 }
 
@@ -54,7 +55,7 @@ test_auction_data = {
         "currency": u"UAH"
     },
     "auctionPeriod": {
-        "startDate": "2017-08-28T19:20:37.363793+03:00"
+        "startDate": "2017-09-7T16:25:37.363793+03:00"
     },
     "procurementMethodType": "dgfInsider",
     "procurementMethodDetails": 'quick, accelerator=1440'
@@ -65,8 +66,8 @@ test_asset_data = {
     "assetType": "basic",
     "assetCustodian": test_Custodian,
     "classification": {
-        "scheme": u"CPV",
-        "id": u"37452200-3",
+        "scheme": u"CAV",
+        "id": u"39513200-3",
         "description": u"Земельні ділянки"
     },
     "unit": {
@@ -108,18 +109,16 @@ class ConciergeTest(unittest.TestCase):
     def setUp(self):
         # Init client for 2 resources
         self.lots_client = LotsClient(
-            resource="lots",
             key=config['token'],
             host_url=config['url'],
             api_version=config['version']
         )
         self.assets_client = AssetsClient(
-            resource="assets",
             key=config['token'],
             host_url=config['url'],
             api_version=config['version']
         )
-        self.auctions_client = APIBaseClient(
+        self.auctions_client = APIResourceClient(
             resource="auctions",
             key=config['auction_token'],
             host_url=config['auction_url'],
@@ -153,15 +152,7 @@ class ConciergeTest(unittest.TestCase):
         # Move assets to pending ==============================================
         for asset in assets:
             asset_id = asset.data.id
-            self.assets_client.patch_resource_item({
-                "access": {
-                    "token": asset.access.token
-                },
-                "data": {
-                    "id": asset_id,
-                    "status": "pending"
-                }
-            })
+            self.assets_client.patch_asset(asset.data.id, {"status": "pending"}, asset.access.token)
             print "Move asset({}) to pending status".format(asset_id)
             self.assertEqual(self.assets_client.get_asset(asset_id).data.status,
                              "pending")
@@ -175,26 +166,11 @@ class ConciergeTest(unittest.TestCase):
         self.assertEqual(lot.data.status, 'draft')
         print "Successfully created lot {}".format(lot.data.id)
         # Move lot to Pending =================================================
-        self.lots_client.patch_resource_item({
-            "access": {
-                "token": lot.access.token
-            },
-            "data": {
-                "id": lot.data.id,
-                "status": "pending"
-            }
-        })
+        self.lots_client.patch_lot(lot.data.id, {"status": "pending"}, lot.access.token)
+
         print "Successfully move lot {} to pending".format(lot.data.id)
         # Move lot to Verification ============================================
-        self.lots_client.patch_resource_item({
-            "access": {
-                "token": lot.access.token
-            },
-            "data": {
-                "id": lot.data.id,
-                "status": "verification"
-            }
-        })
+        self.lots_client.patch_lot(lot.data.id, {"status": "verification"}, lot.access.token)
         print "Successfully move lot {} to verification".format(lot.data.id)
         # Check assets and lot statuses =======================================
         print "Waiting for Concierge ..."
@@ -234,37 +210,45 @@ class ConciergeTest(unittest.TestCase):
         upd_auction = self.auctions_client.get_resource_item(auction.data.id).data
         self.assertEqual(upd_auction.status, "active.tendering")
 
-        # print "Convoy has done his work!"
-        #
-        # # Move lot to dissolved status ========================================
-        # self.lots_client.patch_resource_item({
-        #     "access": {
-        #         "token": lot.access.token
-        #     },
-        #     "data": {
-        #         "id": lot.data.id,
-        #         "status": "dissolved"
-        #     }
-        # })
-        # lot_status = self.lots_client.get_lot(lot.data.id).data.status
-        # self.assertEqual(lot_status, "dissolved")
-        # print "Successfully move lot {} to dissolved".format(lot.data.id)
-        #
-        # # Check assets status
-        #
-        # print "Waiting for Concierge ..."
-        # for i in range(15):
-        #     time.sleep(i)  # Waiting for concierge
-        #     upd_asset = self.assets_client.get_asset(assets[0].data.id).data
-        #
-        #     if upd_asset.status != "active":
-        #         break
-        #
-        # for asset in assets:
-        #     upd_asset = self.assets_client.get_asset(asset.data.id).data
-        #     self.assertEqual(upd_asset.status, "pending")
-        #
-        # print "Concierge has done his work!"
+        print "Waiting for UNS ..."
+        while True:
+            time.sleep(1)  # Waiting for convoy
+            upd_asset = self.auctions_client.get_resource_item(auction.data.id).data
+
+            if upd_asset.status != "active.tendering":
+                break
+
+        print "Waiting for convoy ..."
+        while True:
+            time.sleep(1)  # Waiting for convoy
+            lot_status = self.lots_client.get_lot(lot.data.id).data.status
+
+            if lot_status == "active.salable":
+                break
+
+        print "Convoy has done his work!"
+
+        # Move lot to dissolved status ========================================
+        self.lots_client.patch_lot(lot.data.id, {"status": "dissolved"}, lot.access.token)
+        lot_status = self.lots_client.get_lot(lot.data.id).data.status
+        self.assertEqual(lot_status, "dissolved")
+        print "Successfully move lot {} to dissolved".format(lot.data.id)
+
+        # Check assets status
+
+        print "Waiting for Concierge ..."
+        for i in range(15):
+            time.sleep(i)  # Waiting for concierge
+            upd_asset = self.assets_client.get_asset(assets[0].data.id).data
+
+            if upd_asset.status != "active":
+                break
+
+        for asset in assets:
+            upd_asset = self.assets_client.get_asset(asset.data.id).data
+            self.assertEqual(upd_asset.status, "pending")
+
+        print "Concierge has done his work!"
 
 if __name__ == '__main__':
     unittest.main()

@@ -52,7 +52,7 @@ handlers:
     stream: ext://sys.stdout
 
 loggers:
-  openprocurement.edge.databridge:
+  openprocurement.bridge.basic:
     handlers: [console]
     propagate: no
     level: INFO
