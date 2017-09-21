@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import unittest
 import time
+from datetime import datetime, timedelta
 
 from openprocurement_client.resources.assets import AssetsClient
 from openprocurement_client.resources.lots import LotsClient
@@ -40,7 +41,7 @@ test_auction_data = {
         "currency": u"UAH"
     },
     "auctionPeriod": {
-        "startDate": "2017-09-7T16:25:37.363793+03:00"
+        "startDate": (datetime.now() + timedelta(minutes=3)).isoformat()
     },
     "procurementMethodType": "dgfInsider",
     "procurementMethodDetails": 'quick, accelerator=1440'
@@ -103,7 +104,7 @@ class InternalTest(unittest.TestCase):
         # Move assets to pending ==============================================
         for asset in assets:
             asset_id = asset.data.id
-            self.assets_client.patch_asset(asset.data.id, {"status": "pending"}, asset.access.token)
+            self.assets_client.patch_resource_item(asset.data.id, {"data": {"status": "pending"}}, asset.access.token)
             print "Move asset({}) to pending status".format(asset_id)
             self.assertEqual(self.assets_client.get_asset(asset_id).data.status,
                              "pending")
@@ -117,11 +118,11 @@ class InternalTest(unittest.TestCase):
         self.assertEqual(lot.data.status, 'draft')
         print "Successfully created lot {}".format(lot.data.id)
         # Move lot to Pending =================================================
-        self.lots_client.patch_lot(lot.data.id, {"status": "pending"}, lot.access.token)
+        self.lots_client.patch_resource_item(lot.data.id, {"data": {"status": "pending"}}, lot.access.token)
 
         print "Successfully move lot {} to pending".format(lot.data.id)
         # Move lot to Verification ============================================
-        self.lots_client.patch_lot(lot.data.id, {"status": "verification"}, lot.access.token)
+        self.lots_client.patch_resource_item(lot.data.id, {"data": {"status": "verification"}}, lot.access.token)
         print "Successfully move lot {} to verification".format(lot.data.id)
         # Check assets and lot statuses =======================================
         print "Waiting for Concierge ..."
@@ -180,7 +181,7 @@ class InternalTest(unittest.TestCase):
         print "Convoy has done his work!"
 
         # Move lot to dissolved status ========================================
-        self.lots_client.patch_lot(lot.data.id, {"status": "dissolved"}, lot.access.token)
+        self.lots_client.patch_resource_item(lot.data.id, {"data": {"status": "dissolved"}}, lot.access.token)
         lot_status = self.lots_client.get_lot(lot.data.id).data.status
         self.assertEqual(lot_status, "dissolved")
         print "Successfully move lot {} to dissolved".format(lot.data.id)
@@ -200,6 +201,7 @@ class InternalTest(unittest.TestCase):
             self.assertEqual(upd_asset.status, "pending")
 
         print "Concierge has done his work!"
+
 
 if __name__ == '__main__':
     unittest.main()
