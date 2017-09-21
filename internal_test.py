@@ -76,6 +76,29 @@ class InternalTest(unittest.TestCase):
             api_version=config['auction_version']
         )
 
+    def ensure_resource_status(self, get_resource, id, status, *args, **kwargs):
+        '''
+            Wait for switching resource's status
+        '''
+
+        times = kwargs.get("times", 15)
+        waiting_message = kwargs.get("waiting_message",
+                                     "Waiting for resource's ({}) '{}' status".format(id, status))
+
+        for i in reversed(range(times)):
+            time.sleep(i)
+
+            resource = get_resource(id).data
+            if resource.status == status:
+                break
+            else:
+                print waiting_message
+
+        resource = get_resource(id).data
+        self.assertEqual(resource.status, status)
+
+        return resource
+
     def test_01_general_workflow(self):
         '''
             Create two assets and move them to pending status
@@ -99,7 +122,7 @@ class InternalTest(unittest.TestCase):
         self.assertEqual(assets[1].data.status, 'draft')
 
         print "Successfully created assets [{}, {}]".format(assets[0].data.id,
-                                                           assets[1].data.id)
+                                                            assets[1].data.id)
 
         # Move assets to pending ==============================================
         for asset in assets:
@@ -116,24 +139,25 @@ class InternalTest(unittest.TestCase):
             "data": test_lot_data
         })
         self.assertEqual(lot.data.status, 'draft')
+
         print "Successfully created lot {}".format(lot.data.id)
+
         # Move lot to Pending =================================================
         self.lots_client.patch_resource_item(lot.data.id, {"data": {"status": "pending"}}, lot.access.token)
 
         print "Successfully move lot {} to pending".format(lot.data.id)
+
         # Move lot to Verification ============================================
         self.lots_client.patch_resource_item(lot.data.id, {"data": {"status": "verification"}}, lot.access.token)
-        print "Successfully move lot {} to verification".format(lot.data.id)
-        # Check assets and lot statuses =======================================
-        print "Waiting for Concierge ..."
-        for i in range(15):
-            time.sleep(i)  # Waiting for concierge
-            lot_status = self.lots_client.get_lot(lot.data.id).data.status
-            if lot_status != "verification":
-                break
 
-        upd_lot = self.lots_client.get_lot(lot.data.id).data
-        self.assertEqual(upd_lot.status, "active.salable")
+        print "Successfully move lot {} to verification".format(lot.data.id)
+
+        # Check lot and assets statuses =======================================
+        upd_lot = self.ensure_resource_status(
+            self.lots_client.get_lot,
+            lot.data.id, "active.salable",
+            waiting_message="Waiting for Concierge ..."
+        )
         for asset in upd_lot.assets:
             upd_asset = self.assets_client.get_asset(asset).data
             self.assertEqual(upd_asset.status, "active")
@@ -141,7 +165,7 @@ class InternalTest(unittest.TestCase):
 
         print "Concierge move lot to active.salable and assets to active!"
 
-
+        # Create auction ======================================================
         test_auction_data['merchandisingObject'] = lot.data.id
 
         auction = self.auctions_client.create_resource_item({
@@ -151,32 +175,32 @@ class InternalTest(unittest.TestCase):
 
         print "Successfully created auction {}".format(auction)
 
-        print "Waiting for Convoy ..."
-        for i in range(50):
-            time.sleep(i)  # Waiting for convoy
-            upd_asset = self.auctions_client.get_resource_item(auction.data.id).data
+        # Check auction and lot statuses ======================================
+        self.ensure_resource_status(
+            self.auctions_client.get_resource_item,
+            auction.data.id, "active.tendering",
+            times=20,
+            waiting_message="Waiting for Convoy ..."
+        )
 
-            if upd_asset.status == "active.tendering":
-                break
+        self.assertEqual(self.lots_client.get_lot(lot.data.id).data.status,
+                         "active.auction")
 
-        upd_auction = self.auctions_client.get_resource_item(auction.data.id).data
-        self.assertEqual(upd_auction.status, "active.tendering")
+        # Check auction finished ==============================================
+        self.ensure_resource_status(
+            self.auctions_client.get_resource_item,
+            auction.data.id, "unsuccessful",
+            times=35,
+            waiting_message="Waiting for UNS ..."
+        )
 
-        print "Waiting for UNS ..."
-        while True:
-            time.sleep(1)  # Waiting for convoy
-            upd_asset = self.auctions_client.get_resource_item(auction.data.id).data
-
-            if upd_asset.status != "active.tendering":
-                break
-
-        print "Waiting for convoy ..."
-        while True:
-            time.sleep(1)  # Waiting for convoy
-            lot_status = self.lots_client.get_lot(lot.data.id).data.status
-
-            if lot_status == "active.salable":
-                break
+        # Check lot status ====================================================
+        self.ensure_resource_status(
+            self.lots_client.get_lot,
+            lot.data.id, "active.salable",
+            times=20,
+            waiting_message="Waiting for Convoy ..."
+        )
 
         print "Convoy has done his work!"
 
@@ -184,17 +208,15 @@ class InternalTest(unittest.TestCase):
         self.lots_client.patch_resource_item(lot.data.id, {"data": {"status": "dissolved"}}, lot.access.token)
         lot_status = self.lots_client.get_lot(lot.data.id).data.status
         self.assertEqual(lot_status, "dissolved")
+
         print "Successfully move lot {} to dissolved".format(lot.data.id)
 
-        # Check assets status
-
-        print "Waiting for Concierge ..."
-        for i in range(15):
-            time.sleep(i)  # Waiting for concierge
-            upd_asset = self.assets_client.get_asset(assets[0].data.id).data
-
-            if upd_asset.status != "active":
-                break
+        # Check assets status =================================================
+        self.ensure_resource_status(
+            self.assets_client.get_asset,
+            assets[0].data.id, "pending",
+            waiting_message="Waiting for Concierge ..."
+        )
 
         for asset in assets:
             upd_asset = self.assets_client.get_asset(asset.data.id).data
