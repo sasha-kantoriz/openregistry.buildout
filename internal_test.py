@@ -127,7 +127,7 @@ class InternalTest(unittest.TestCase):
         # Move assets to pending ==============================================
         for asset in assets:
             asset_id = asset.data.id
-            self.assets_client.patch_resource_item(asset.data.id, {"data": {"status": "pending"}}, asset.access.token)
+            self.assets_client.patch_asset(asset.data.id, {"data": {"status": "pending"}}, asset.access.token)
             self.assertEqual(self.assets_client.get_asset(asset_id).data.status,
                              "pending")
 
@@ -144,13 +144,13 @@ class InternalTest(unittest.TestCase):
         print "Successfully created lot [{}]".format(lot.data.id)
 
         # Move lot to Pending =================================================
-        self.lots_client.patch_resource_item(lot.data.id, {"data": {"status": "pending"}}, lot.access.token)
+        self.lots_client.patch_lot(lot.data.id, {"data": {"status": "pending"}}, lot.access.token)
         self.assertEqual(self.lots_client.get_lot(lot.data.id).data.status, "pending")
 
         print "Moved lot to 'pending' status"
 
         # Move lot to Verification ============================================
-        self.lots_client.patch_resource_item(lot.data.id, {"data": {"status": "verification"}}, lot.access.token)
+        self.lots_client.patch_lot(lot.data.id, {"data": {"status": "verification"}}, lot.access.token)
         self.assertEqual(self.lots_client.get_lot(lot.data.id).data.status, "verification")
 
         print "Moved lot to 'verification' status"
@@ -210,7 +210,7 @@ class InternalTest(unittest.TestCase):
         print "Convoy has moved lot to 'active.salable' status and done his work!"
 
         # Move lot to dissolved status ========================================
-        self.lots_client.patch_resource_item(lot.data.id, {"data": {"status": "dissolved"}}, lot.access.token)
+        self.lots_client.patch_lot(lot.data.id, {"data": {"status": "dissolved"}}, lot.access.token)
         lot_status = self.lots_client.get_lot(lot.data.id).data.status
         self.assertEqual(lot_status, "dissolved")
 
