@@ -47,14 +47,14 @@ test_auction_data = {
 }
 
 
-class ConciergeTest(unittest.TestCase):
+class InternalTest(unittest.TestCase):
     '''
-        Internal Test for concierge(bot) correctness.
+        Internal TestCase for openregistry correctness.
         openprocurement.client.python for request
-        Create 2 assets and connect this assets to created lot
-        Move lot to dissolved and check assets status
+
+        Test workflow, concierge(bot), convoy(bot) and
+        check switching statuses
     '''
-    # Declare test data
 
     def setUp(self):
         # Init client for 2 resources
@@ -75,15 +75,16 @@ class ConciergeTest(unittest.TestCase):
             api_version=config['auction_version']
         )
 
-    def test_01_concierge(self):
+    def test_01_general_workflow(self):
         '''
-            Test workflow
             Create two assets and move them to pending status
             Create lot with this assets and move to verification status
-            Check statuses
+            Create procedure from lot
+            Check auction is unsuccessful and lot is active.salable
+            Move lot to dissolved status and check assets pending status
         '''
-        # Create assets =======================================================
 
+        # Create assets =======================================================
         assets = []
         assets.append(self.assets_client.create_resource_item({
             "data": test_asset_basic_data
