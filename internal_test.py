@@ -17,9 +17,9 @@ from openregistry.api.tests.blanks.json_data import (
 config = {
     "url": "https://lb.api-sandbox.registry.ea.openprocurement.net",
     "version": 0,
-    "token": "b31ef66eabcc44e3b5a5347b57539f49",
+    "token": "",
     "auction_url": "https://lb.api-sandbox.ea.openprocurement.org",
-    "auction_token": "e9c3ccb8e8124f26941d5f9639a4ebc3",
+    "auction_token": "",
     "auction_version": 2.5
 }
 
@@ -81,7 +81,7 @@ class InternalTest(unittest.TestCase):
             Wait for switching resource's status
         '''
 
-        times = kwargs.get("times", 15)
+        times = kwargs.get("times", 20)
         waiting_message = kwargs.get("waiting_message",
                                      "Waiting for resource's ({}) '{}' status".format(id, status))
 
@@ -128,9 +128,10 @@ class InternalTest(unittest.TestCase):
         for asset in assets:
             asset_id = asset.data.id
             self.assets_client.patch_resource_item(asset.data.id, {"data": {"status": "pending"}}, asset.access.token)
-            print "Move asset({}) to pending status".format(asset_id)
             self.assertEqual(self.assets_client.get_asset(asset_id).data.status,
                              "pending")
+
+        print "Moved assets to 'pending' status"
 
         # Create lot ==========================================================
         test_lot_data['assets'] = [assets[0].data.id,
@@ -140,17 +141,19 @@ class InternalTest(unittest.TestCase):
         })
         self.assertEqual(lot.data.status, 'draft')
 
-        print "Successfully created lot {}".format(lot.data.id)
+        print "Successfully created lot [{}]".format(lot.data.id)
 
         # Move lot to Pending =================================================
         self.lots_client.patch_resource_item(lot.data.id, {"data": {"status": "pending"}}, lot.access.token)
+        self.assertEqual(self.lots_client.get_lot(lot.data.id).data.status, "pending")
 
-        print "Successfully move lot {} to pending".format(lot.data.id)
+        print "Moved lot to 'pending' status"
 
         # Move lot to Verification ============================================
         self.lots_client.patch_resource_item(lot.data.id, {"data": {"status": "verification"}}, lot.access.token)
+        self.assertEqual(self.lots_client.get_lot(lot.data.id).data.status, "verification")
 
-        print "Successfully move lot {} to verification".format(lot.data.id)
+        print "Moved lot to 'verification' status"
 
         # Check lot and assets statuses =======================================
         upd_lot = self.ensure_resource_status(
@@ -163,7 +166,7 @@ class InternalTest(unittest.TestCase):
             self.assertEqual(upd_asset.status, "active")
             self.assertEqual(upd_asset.relatedLot, upd_lot.id)
 
-        print "Concierge move lot to active.salable and assets to active!"
+        print "Concierge has moved lot to 'active.salable' and assets to 'active' statuses"
 
         # Create auction ======================================================
         test_auction_data['merchandisingObject'] = lot.data.id
@@ -173,18 +176,19 @@ class InternalTest(unittest.TestCase):
         })
         self.assertEqual(auction.data.status, 'pending.verification')
 
-        print "Successfully created auction {}".format(auction)
+        print "Successfully created auction [{}]".format(auction.data.id)
 
         # Check auction and lot statuses ======================================
         self.ensure_resource_status(
             self.auctions_client.get_resource_item,
             auction.data.id, "active.tendering",
-            times=20,
             waiting_message="Waiting for Convoy ..."
         )
 
         self.assertEqual(self.lots_client.get_lot(lot.data.id).data.status,
                          "active.auction")
+
+        print "Convoy has moved lot to 'active.auction' status"
 
         # Check auction finished ==============================================
         self.ensure_resource_status(
@@ -194,22 +198,23 @@ class InternalTest(unittest.TestCase):
             waiting_message="Waiting for UNS ..."
         )
 
+        print "Switched auction to 'unsuccessful' status"
+
         # Check lot status ====================================================
         self.ensure_resource_status(
             self.lots_client.get_lot,
             lot.data.id, "active.salable",
-            times=20,
             waiting_message="Waiting for Convoy ..."
         )
 
-        print "Convoy has done his work!"
+        print "Convoy has moved lot to 'active.salable' status and done his work!"
 
         # Move lot to dissolved status ========================================
         self.lots_client.patch_resource_item(lot.data.id, {"data": {"status": "dissolved"}}, lot.access.token)
         lot_status = self.lots_client.get_lot(lot.data.id).data.status
         self.assertEqual(lot_status, "dissolved")
 
-        print "Successfully move lot {} to dissolved".format(lot.data.id)
+        print "Moved lot to 'dissolved' status"
 
         # Check assets status =================================================
         self.ensure_resource_status(
@@ -222,7 +227,7 @@ class InternalTest(unittest.TestCase):
             upd_asset = self.assets_client.get_asset(asset.data.id).data
             self.assertEqual(upd_asset.status, "pending")
 
-        print "Concierge has done his work!"
+        print "Concierge has moved assets to 'pending' status and done his work!"
 
 
 if __name__ == '__main__':
