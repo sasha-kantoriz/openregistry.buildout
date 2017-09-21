@@ -6,6 +6,12 @@ from openprocurement_client.resources.assets import AssetsClient
 from openprocurement_client.resources.lots import LotsClient
 from openprocurement_client.clients import APIResourceClient
 
+from openregistry.api.tests.blanks.json_data import (
+    test_organization,
+    test_asset_basic_data,
+    test_lot_data
+)
+
 # Config with info about API
 config = {
     "url": "https://lb.api-sandbox.registry.ea.openprocurement.net",
@@ -17,34 +23,13 @@ config = {
 }
 
 # Data for test
-test_Custodian = {
-    "name": u"Державне управління справами",
-    "identifier": {
-        "scheme": u"UA-EDR",
-        "id": u"00037256",
-        "uri": u"http://www.dus.gov.ua/"
-    },
-    "address": {
-        "countryName": u"Україна",
-        "postalCode": u"01220",
-        "region": u"м. Київ",
-        "locality": u"м. Київ",
-        "streetAddress": u"вул. Банкова, 11, корпус 1"
-    },
-    "contactPoint": {
-        "name": u"Державне управління справами",
-        "telephone": u"0440000000"
-    }
-}
-
-test_procuringEntity = test_Custodian.copy()
 test_auction_data = {
     "title": u"футляри до державних нагород",
     "dgfID": u"219560",
     "dgfDecisionDate": u"2016-11-17",
     "dgfDecisionID": u"219560",
     "tenderAttempts": 1,
-    "procuringEntity": test_procuringEntity,
+    "procuringEntity": test_organization,
     "status": "pending.verification",
     "value": {
         "amount": 100,
@@ -59,41 +44,6 @@ test_auction_data = {
     },
     "procurementMethodType": "dgfInsider",
     "procurementMethodDetails": 'quick, accelerator=1440'
-}
-
-test_asset_data = {
-    "title": u"Земля для космодрому",
-    "assetType": "basic",
-    "assetCustodian": test_Custodian,
-    "classification": {
-        "scheme": u"CAV",
-        "id": u"39513200-3",
-        "description": u"Земельні ділянки"
-    },
-    "unit": {
-        "name": u"item",
-        "code": u"44617100-9"
-    },
-    "quantity": 5,
-    "address": {
-        "countryName": u"Україна",
-        "postalCode": "79000",
-        "region": u"м. Київ",
-        "locality": u"м. Київ",
-        "streetAddress": u"вул. Банкова 1"
-    },
-    "value": {
-        "amount": 100,
-        "currency": u"UAH"
-    },
-}
-
-test_lot_data = {
-    "title": u"Тестовий лот",
-    "description": u"Щось там тестове",
-    "lotType": "basic",
-    "lotCustodian": test_Custodian,
-    "assets": []
 }
 
 
@@ -136,10 +86,10 @@ class ConciergeTest(unittest.TestCase):
 
         assets = []
         assets.append(self.assets_client.create_resource_item({
-            "data": test_asset_data
+            "data": test_asset_basic_data
         }))
         assets.append(self.assets_client.create_resource_item({
-            "data": test_asset_data
+            "data": test_asset_basic_data
         }))
         self.assertNotEqual(assets[0].data.id,
                             assets[1].data.id)
