@@ -19,13 +19,11 @@
     key: "${options['lots_api_key']}"
     host_url: "${options['lots_url']}"
     api_version: ${options['lots_api_version']}
-    resource: "lots"
     user_agent: "${options['lots_agent']}"
   assets_db:
     key: "${options['assets_api_key']}"
     host_url: "${options['assets_url']}"
     api_version: ${options['assets_api_version']}
-    resource: "assets"
     user_agent: "${options['assets_agent']}"
   version: 1
 
