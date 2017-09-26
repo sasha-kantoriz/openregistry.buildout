@@ -14,7 +14,6 @@
     key: "${options['auctions_api_key']}"
     host_url: "${options['auctions_url']}"
     api_version: ${options['auctions_api_version']}
-    resource: "auctions"
     user_agent: "${options['auctions_agent']}"
   lots_db:
     key: "${options['lots_api_key']}"
