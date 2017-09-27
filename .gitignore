@@ -63,6 +63,9 @@ src/
 
 cover/
 output.html
+cachegrind.out.myapp
+myapp.profile
+
 
 # pyenv
 .python-version

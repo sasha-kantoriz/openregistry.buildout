@@ -5,8 +5,28 @@ extends =
 [openregistry.api.ini]
 couchdb_db = test
 
+[data_bridge_defaults]
+resources_api_version = 0.1
+resources_api_server = http://${circus.ini:web_host}:${circus.ini:web_port}
+couch_user = ""
+couch_password = ""
+
+[concierge.yaml]
+lots_url = ${data_bridge_defaults:resources_api_server}
+assets_url = ${data_bridge_defaults:resources_api_server}
+lots_api_version = ${data_bridge_defaults:resources_api_version}
+assets_api_version = ${data_bridge_defaults:resources_api_version}
+lot_secret_token =
+assets_secret_token =
+
+[convoy.yaml]
+lots_api_key =
+assets_api_key =
+
 [circus.ini]
-auctions_databridge = True
+webapp = True
+databridge = True
+concierge = True
 convoy = True
 # For receiving monitoring data in statsd use statsd_plugin = True
 statsd_plugin = True

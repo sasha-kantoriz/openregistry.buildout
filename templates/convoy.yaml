@@ -6,7 +6,7 @@
     password: ${options['db_password']}
     host: ${options['db_host']}
     port: ${options['db_port']}
-    db: ""
+    db: ${options['db_name']}
   cdb_ds:
     host_url: "${options['auctions_ds_url']}"
     auth_ds: ["${options['auctions_ds_login']}", "${options['auctions_ds_password']}"]
