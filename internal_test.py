@@ -14,13 +14,18 @@ from openregistry.api.tests.blanks.json_data import (
 )
 
 # Config with info about API
+# config = {
+#     "url": "https://lb.api-sandbox.registry.ea.openprocurement.net",
+#     "version": 0,
+#     "token": "",
+#     "auction_url": "https://lb.api-sandbox.ea.openprocurement.org",
+#     "auction_token": "",
+#     "auction_version": 2.5
+# }
 config = {
-    "url": "https://lb.api-sandbox.registry.ea.openprocurement.net",
-    "version": 0,
-    "token": "",
-    "auction_url": "https://lb.api-sandbox.ea.openprocurement.org",
-    "auction_token": "",
-    "auction_version": 2.5
+    "url": "http://127.0.0.1:6543",
+    "version": 0.1,
+    "token": "broker",
 }
 
 # Data for test
@@ -69,12 +74,12 @@ class InternalTest(unittest.TestCase):
             host_url=config['url'],
             api_version=config['version']
         )
-        self.auctions_client = APIResourceClient(
-            resource="auctions",
-            key=config['auction_token'],
-            host_url=config['auction_url'],
-            api_version=config['auction_version']
-        )
+        # self.auctions_client = APIResourceClient(
+        #     resource="auctions",
+        #     key=config['auction_token'],
+        #     host_url=config['auction_url'],
+        #     api_version=config['auction_version']
+        # )
 
     def ensure_resource_status(self, get_resource, id, status, *args, **kwargs):
         '''
@@ -169,45 +174,45 @@ class InternalTest(unittest.TestCase):
         print "Concierge has moved lot to 'active.salable' and assets to 'active' statuses"
 
         # Create auction ======================================================
-        test_auction_data['merchandisingObject'] = lot.data.id
-
-        auction = self.auctions_client.create_resource_item({
-            "data": test_auction_data
-        })
-        self.assertEqual(auction.data.status, 'pending.verification')
-
-        print "Successfully created auction [{}]".format(auction.data.id)
+        # test_auction_data['merchandisingObject'] = lot.data.id
+        #
+        # auction = self.auctions_client.create_resource_item({
+        #     "data": test_auction_data
+        # })
+        # self.assertEqual(auction.data.status, 'pending.verification')
+        #
+        # print "Successfully created auction [{}]".format(auction.data.id)
 
         # Check auction and lot statuses ======================================
-        self.ensure_resource_status(
-            self.auctions_client.get_resource_item,
-            auction.data.id, "active.tendering",
-            waiting_message="Waiting for Convoy ..."
-        )
-
-        self.assertEqual(self.lots_client.get_lot(lot.data.id).data.status,
-                         "active.auction")
-
-        print "Convoy has moved lot to 'active.auction' status"
+        # self.ensure_resource_status(
+        #     self.auctions_client.get_resource_item,
+        #     auction.data.id, "active.tendering",
+        #     waiting_message="Waiting for Convoy ..."
+        # )
+        #
+        # self.assertEqual(self.lots_client.get_lot(lot.data.id).data.status,
+        #                  "active.auction")
+        #
+        # print "Convoy has moved lot to 'active.auction' status"
 
         # Check auction finished ==============================================
-        self.ensure_resource_status(
-            self.auctions_client.get_resource_item,
-            auction.data.id, "unsuccessful",
-            times=35,
-            waiting_message="Waiting for UNS ..."
-        )
-
-        print "Switched auction to 'unsuccessful' status"
+        # self.ensure_resource_status(
+        #     self.auctions_client.get_resource_item,
+        #     auction.data.id, "unsuccessful",
+        #     times=35,
+        #     waiting_message="Waiting for UNS ..."
+        # )
+        #
+        # print "Switched auction to 'unsuccessful' status"
 
         # Check lot status ====================================================
-        self.ensure_resource_status(
-            self.lots_client.get_lot,
-            lot.data.id, "active.salable",
-            waiting_message="Waiting for Convoy ..."
-        )
-
-        print "Convoy has moved lot to 'active.salable' status and done his work!"
+        # self.ensure_resource_status(
+        #     self.lots_client.get_lot,
+        #     lot.data.id, "active.salable",
+        #     waiting_message="Waiting for Convoy ..."
+        # )
+        #
+        # print "Convoy has moved lot to 'active.salable' status and done his work!"
 
         # Move lot to dissolved status ========================================
         self.lots_client.patch_lot(lot.data.id, {"data": {"status": "dissolved"}}, lot.access.token)
