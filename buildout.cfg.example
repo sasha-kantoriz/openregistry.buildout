@@ -1,5 +1,6 @@
 [buildout]
 extends =
+    statsd.cfg
     profiles/development.cfg
 
 [openregistry.api.ini]
