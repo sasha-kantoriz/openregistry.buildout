@@ -1,101 +1,99 @@
 ---
-  # Таймаут роботи конвоя
+  # Convoy timeout (sec.)
   timeout: 3
-  # Таймаут роботи потоку переносу докуменів
+  # Documents transfer timeout (sec.)
   transmitter_timeout: 5
-  # Дані для доступу до бази данних
+  # Params for local database
   couchdb:
-    # Хост на якому знаходиться сервер бази данних
-    # ЗАЛЕЖНОСТІ:
-    # файл: couchdb.ini, параметр: bind_address
-    # файл: concierge.yaml, параметр: db.host
-    # файл: convoy.yaml, параметр: couchdb.host
-    # файл: databridge.yaml, параметр: couch_url.host
-    # файл: openregistry.api.ini, параметр: 'couchdb.url'
+    # DB server host
+    # DEPENDENCIES:
+    # file: couchdb.ini, var: bind_address
+    # file: concierge.yaml, var: db.host
+    # file: convoy.yaml, var: couchdb.host
+    # file: databridge.yaml, var: couch_url.host
+    # file: openregistry.api.ini, var: 'couchdb.url'
     host: "127.0.0.1"
-    # Порт на якому доступний сервер бази данних
-    # ЗАЛЕЖНОСТІ:
-    # файл: couchdb.ini, параметр: port
-    # файл: concierge.yaml, параметр: db.port
-    # файл: convoy.yaml, параметр: couchdb.port
-    # файл: databridge.yaml, параметр: couch_url.port
-    # файл: openregistry.api.ini, параметр: 'couchdb.url'
+    # DB server port
+    # DEPENDENCIES:
+    # file: couchdb.ini, var: port
+    # file: concierge.yaml, var: db.port
+    # file: convoy.yaml, var: couchdb.port
+    # file: databridge.yaml, var: couch_url.port
+    # file: openregistry.api.ini, var: 'couchdb.url'
     port: "5984"
-    # Користувач
-    # ЗАЛЕЖНОСТІ:
-    # файл: couchdb.ini
-    # файл: concierge.yaml db.login
-    # файл: convoy.yaml, параметр: couchdb.user
-    # файл: databridge.yaml, параметр: couch_url.user
-    # файл: openregistry.api.ini, параметр: 'couchdb.url'
+    # DB user
+    # DEPENDENCIES:
+    # file: couchdb.ini
+    # file: concierge.yaml db.login
+    # file: convoy.yaml, var: couchdb.user
+    # file: databridge.yaml, var: couch_url.user
+    # file: openregistry.api.ini, var: 'couchdb.url'
     user: ""
-    # Пароль користувача
-    # ЗАЛЕЖНОСТІ:
-    # файл: couchdb.ini
-    # файл: concierge.yaml db.password
-    # файл: convoy.yaml, параметр: couchdb.password
-    # файл: databridge.yaml, параметр: couch_url.password
-    # файл: openregistry.api.ini, параметр: 'couchdb.url'
+    # DB password
+    # DEPENDENCIES:
+    # file: couchdb.ini
+    # file: concierge.yaml db.password
+    # file: convoy.yaml, var: couchdb.password
+    # file: databridge.yaml, var: couch_url.password
+    # file: openregistry.api.ini, var: 'couchdb.url'
     password: ""
-    # Назва бази даних
+    # DB name
     db: ea_auctions
-  # Параметри для роботи з документ сервісом
+  # Params for work with document service (DS)
   cdb_ds:
-    # Хост документ сервіса
+    # DS host
     host_url: "http://127.0.0.1:11111"
-    # Дані для авторизації [user, password]
+    # Auth params [user, password]
     auth_ds: ["", ""]
-  # Дані для роботи з ЦБД
+  # Params for work with CDB API
   cdb:
-    # Токен, щоб мати можливість редагувати дані
+    # API access token
     key: ""
-    # Хост на ЦБД
-    # ЗАЛЕЖНОСТІ:
-    # файл auctions_databridge.yaml, параметр: main.resources_api_server
+    # Host
+    # DEPENDENCIES:
+    # file auctions_databridge.yaml, var: main.resources_api_server
     host_url: "http://127.0.0.1:12345"
-    # Версія api
-    # ЗАЛЕЖНОСТІ:
-    # файл auctions_databridge.yaml, параметр: main.resources_api_version
+    # API version
+    # DEPENDENCIES:
+    # file auctions_databridge.yaml, var: main.resources_api_version
     api_version: 2.5
-    # Значення заголовка 'User-Agent' для клієнта
+    # API client header value for 'User-Agent'
     user_agent: "auctions_convoy"
-  # Дані для роботи з АРІ лотів
+  # Params for work with lots
   lots_db:
-    # Токен для можливості вносити зміни
-    # Токен для взаємодії з API
-    # ЗАЛЕЖНОСТІ:
-    # файл: auth.ini
+    # API access token
+    # DEPENDENCIES:
+    # file: auth.ini
     key: "convoy"
-    # Хост на якому доступний сервер АРІ
-    # ЗАЛЕЖНОСТІ:
-    # файл: openregistry.api.ini, секція server:main, параметр: host, port
-    # файл: circus.ini, секція socket:web, параметр: host, port
-    # файл: concierge.yaml, параметр: lots.url
+    # API host
+    # DEPENDENCIES:
+    # file: openregistry.api.ini, section server:main, var: host, port
+    # file: circus.ini, section socket:web, var: host, port
+    # file: concierge.yaml, var: lots.url
     host_url: "http://0.0.0.0:6543"
-    # Версія АРІ
-    # ЗАЛЕЖНОСТІ:
-    # файл: concierge.yaml, параметр: lots.version
+    # API version
+    # DEPENDENCIES:
+    # file: concierge.yaml, var: lots.version
     api_version: 0.1
-    # Значення заголовка 'User-Agent' для клієнта
+    # API client header value for 'User-Agent'
     user_agent: "lots_convoy"
-  # Дані для роботи з АРІ асетів
+  # Params for work with assets
   assets_db:
-    # Токен для можливості вносити зміни
-    # Токен для взаємодії з API
-    # ЗАЛЕЖНОСТІ:
-    # файл: auth.ini
+    # API access token
+    # DEPENDENCIES:
+    # file: auth.ini
     key: "convoy"
-    # Хост на якому доступний сервер АРІ
-    # ЗАЛЕЖНОСТІ:
-    # файл: openregistry.api.ini, секція server:main, параметр: host, port
-    # файл: circus.ini, секція socket:web, параметр: host, port
-    # файл: concierge.yaml, параметр: assets.url
+    # API host
+    # DEPENDENCIES:
+    # file: openregistry.api.ini, section server:main, var: host, port
+    # file: circus.ini, section socket:web, var: host, port
+    # file: concierge.yaml, var: assets.url
     host_url: "http://0.0.0.0:6543"
-    # Версія АРІ
-    # ЗАЛЕЖНОСТІ:
-    # файл: concierge.yaml, параметр: assets.version
+    # API version
+    # DEPENDENCIES:
+    # file: concierge.yaml, var: assets.version
     api_version: 0.1
-    # Значення заголовка 'User-Agent' для клієнта
+    # API client header value for 'User-Agent'
     user_agent: "assets_convoy"
   version: 1
 

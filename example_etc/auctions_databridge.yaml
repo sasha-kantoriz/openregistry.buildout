@@ -1,110 +1,107 @@
 main:
-  # Сервер api з аукціонами
+  # API host with auctions
   resources_api_server: http://127.0.0.1:12345
-  # Версія api
+  # API version
   resources_api_version: "2.5"
-  # Сервер з публічними даними аукнціонів в деяких випадках може відрізніятись від
-  # resources_api_server
+  # Server with public data of auctions
   public_resources_api_server: http://127.0.0.1:12345
-  # Параметри для налаштування локальної бази данних
+  # Params for local database
   couch_url:
-    # Хост на якому знаходиться сервер бази данних
-    # ЗАЛЕЖНОСТІ:
-    # файл: couchdb.ini, параметр: bind_address
-    # файл: concierge.yaml, параметр: db.host
-    # файл: convoy.yaml, параметр: couchdb.host
-    # файл: databridge.yaml, параметр: couch_url.host
-    # файл: openregistry.api.ini, параметр: 'couchdb.url'
+    # Server DB host
+    # DEPENDENCIES:
+    # file: couchdb.ini, var: bind_address
+    # file: concierge.yaml, var: db.host
+    # file: convoy.yaml, var: couchdb.host
+    # file: databridge.yaml, var: couch_url.host
+    # file: openregistry.api.ini, var: 'couchdb.url'
     host: "127.0.0.1"
-    # Порт на якому доступний сервер бази данних
-    # ЗАЛЕЖНОСТІ:
-    # файл: couchdb.ini, параметр: port
-    # файл: concierge.yaml, параметр: db.port
-    # файл: convoy.yaml, параметр: couchdb.port
-    # файл: databridge.yaml, параметр: couch_url.port
-    # файл: openregistry.api.ini, параметр: 'couchdb.url'
+    # Server DB port
+    # DEPENDENCIES:
+    # file: couchdb.ini, var: port
+    # file: concierge.yaml, var: db.port
+    # file: convoy.yaml, var: couchdb.port
+    # file: databridge.yaml, var: couch_url.port
+    # file: openregistry.api.ini, var: 'couchdb.url'
     port: "5984"
-    # Користувач
-    # ЗАЛЕЖНОСТІ:
-    # файл: couchdb.ini
-    # файл: concierge.yaml db.login
-    # файл: convoy.yaml, параметр: couchdb.user
-    # файл: databridge.yaml, параметр: couch_url.user
-    # файл: openregistry.api.ini, параметр: 'couchdb.url'
+    # DB user
+    # DEPENDENCIES:
+    # file: couchdb.ini
+    # file: concierge.yaml db.login
+    # file: convoy.yaml, var: couchdb.user
+    # file: databridge.yaml, var: couch_url.user
+    # file: openregistry.api.ini, var: 'couchdb.url'
     user: ""
-    # Пароль користувача
-    # ЗАЛЕЖНОСТІ:
-    # файл: couchdb.ini
-    # файл: concierge.yaml db.password
-    # файл: convoy.yaml, параметр: couchdb.password
-    # файл: databridge.yaml, параметр: couch_url.password
-    # файл: openregistry.api.ini, параметр: 'couchdb.url'
+    # DB password
+    # DEPENDENCIES:
+    # file: couchdb.ini
+    # file: concierge.yaml db.password
+    # file: convoy.yaml, var: couchdb.password
+    # file: databridge.yaml, var: couch_url.password
+    # file: openregistry.api.ini, var: 'couchdb.url'
     password: ""
-  # Назва бази даних
+  # db name
   db_name: ea_auctions
-  # Значення в секундах на яке збільшиться таймаут при неуспішному запиті клієнтом
+  # Increase value (sec.) when unsuccessful response from client
   client_inc_step_timeout: 0.1
-  # Значення в секундах на яке зменшиться таймаут при успішному запиті клієнтом
+  # Decrease value (sec.) when successful response from client
   client_dec_step_timeout: 0.02
-  # Поріг таймауту в секундах при якому клієнту скинуться куки
+  # Threshold value (sec.) when clear client cookies
   drop_threshold_client_cookies: 1.5
-  # Таймаут для потоків які опрацьовують чергу з ресурсами коли вона пуста
+  # Timeout (sec.) when main workers idle
   worker_sleep: 5
-  # Таймаут для потоків які працюють з чергою повторного опрацювання
+  # Timeout (sec.) when retry workers idle
   retry_default_timeout: 5
-  # Число спроб опрацювати ресурс, після якого він не буде кластись в
-  # чергу повторного опрацювання і буде проігнорований
+  # Retries count to process item before him will be skipped
   retries_count: 10
-  # Час (сек.) який потік буде чекати поки в черзі не появиться ресурс
+  # Queue timeout (sec.) if queue is empty
   queue_timeout: 5
-  # Поріг заповнення черги (%) вище якого будуть додаватись потоки,
-  # поки не буде досягнуто максимльного значення потоків workers_max
+  # Queue size threshold (%) when will be spawn new threads,
+  # but not greater than workers_max value
   workers_inc_threshold: 75
-  # Поріг заповнення черги (%) нижче якого будуть зменшуватись потоки,
-  # до мінімальної к-ті, workers_min
+  # Queue size threshold (%) when will be kill threads,
+  # but not less than workers_min value
   workers_dec_threshold: 35
-  # Максимальна к-ть потоків для роботи з основною чергою
+  # Max threads to process main queue
   workers_max: 1
-  # Мінімальна к-ть потоків для роботи з основною чергою
+  # Min threads to process main queue
   workers_min: 1
-  # Мінімальна к-ть потоків для роботи з чергою повторного опрацювання
+  # Min threads to process retry queue
   retry_workers_min: 1
-  # Максимальна к-ть потоків для роботи з чергою повторного опрацювання
+  # Max threads to process retry queue
   retry_workers_max: 3
-  # Розмір основної черги, значення '-1' вказує на те що черга не обмежена в розмірі
+  # Queue size value, -1 mean unlimited size
   resource_items_queue_size: 100
-  # Розмір черги повторного опрацювання,
-  # значення '-1' вказує на те що черга не обмежена в розмірі
+  # Retry queue size value, -1 mean unlimited size
   retry_resource_items_queue_size: -1
-  # К-ть потоків для наповнення основної черги, це значення завжди повинно бути 1
+  # Threads count to process feed
   filter_workers_count: 1
-  # Інтервал (сек.) з яким моніторяться черги і потоки і клієнти
+  # Interval (sec.) to monitor queue sizes and threads
   watch_interval: 10
-  # К-ть елементів яку отримуватиме клієнт при одному запиту, максимальне значення 1000
+  # Items count in one response from client, max value is 1000
   resource_items_limit: 100
-  # Назва ресурсу, інші можливі значення 'contracts', 'plans', 'tenders'
+  # Resource name, another possible values: 'contracts', 'plans', 'tenders'
   resource: auctions
-  # Значення заголовка 'User-Agent' для клієнта
+  # API client header value for 'User-Agent'
   user_agent: convoy
-  # Макс. к-ть елементів яка зберігається за один запит до бази даних
+  # Bulk size per one request to database
   bulk_save_limit: 1000
-  # Інтервал (сек.) з яким зберігаються дані в базі
+  # Interval (sec.) between requests to database
   bulk_save_interval: 3
-  # Макс. к-ть елементів яка відправляється на вюшку бази за один запит
+  # Max bulk size per query request to database
   bulk_query_limit: 5000
-  # Інтервал (сек.) з яким здійснються запити на вюшку бази даних
+  # Interval (sec.) between query requests to database
   bulk_query_interval: 3
-  # Додаткові параметри для керування швидкодією API клієнта
+  # Params to configure api client performance
   retrievers_params:
-    # Таймаут з яким будуть робитись запити назад
+    # Timeout (sec.) between backward requests
     down_requests_sleep: 10
-    # Таймаут з яким будуть робитись запити вперед
+    # Timeout (sec.) between forward requests
     up_requests_sleep: 10
-    # Макс. таймаут з яким будуть робитись запити вперед при отримані "пустої" відповіді
+    # Max timeout (sec.) between forward requests when receive "empty" response
     up_wait_sleep: 30
-    # Мін. таймаут з яким будуть робитись запити вперед при отримані "пустої" відповіді
+    # Min timeout (sec.) between forward requests when receive "empty" response
     up_wait_sleep_min: 5
-    # Розмір черги в клієнті
+    # Queue size value for ResourceFeeder
     queue_size: 1001
 version: 1
 
