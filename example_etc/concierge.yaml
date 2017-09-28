@@ -1,22 +1,78 @@
----
+# Параметри для налаштування локальної бази данних
 db:
- host:  "127.0.0.1"
- name:  "lots_db"
- port: "5984"
- login: ""
- password: ""
- filter: "lots/status"
+  # Хост на якому знаходиться сервер бази данних
+  # ЗАЛЕЖНОСТІ:
+  # файл: couchdb.ini, параметр: bind_address
+  # файл: convoy.yaml, параметр: couchdb.host
+  # файл: databridge.yaml, параметр: couch_url.host
+  # файл: auctions_databridge.yaml, параметр: couch_url.host
+  # файл: openregistry.api.ini, параметр: 'couchdb.url'
+  host:  "127.0.0.1"
+  # Назва бази даних
+  name:  "lots_db"
+  # Порт на якому доступний сервер бази данних
+  # ЗАЛЕЖНОСТІ:
+  # файл: couchdb.ini, параметр: port
+  # файл: convoy.yaml, параметр: couchdb.port
+  # файл: databridge.yaml, параметр: couch_url.port
+  # файл: auctions_databridge.yaml, параметр: couch_url.port
+  # файл: openregistry.api.ini, параметр: 'couchdb.url'
+  port: "5984"
+  # Користувач
+  # ЗАЛЕЖНОСТІ:
+  # файл: couchdb.ini
+  # файл: convoy.yaml, параметр: couchdb.user
+  # файл: databridge.yaml, параметр: couch_url.user
+  # файл: auctions_databridge.yaml, параметр: couch_url.user
+  # файл: openregistry.api.ini, параметр: 'couchdb.url'
+  login: ""
+  # Пароль користувача
+  # ЗАЛЕЖНОСТІ:
+  # файл: couchdb.ini
+  # файл: convoy.yaml, параметр: couchdb.password
+  # файл: databridge.yaml, параметр: couch_url.password
+  # файл: auctions_databridge.yaml, параметр: couch_url.password
+  # файл: openregistry.api.ini, параметр: 'couchdb.url'
+  password: ""
+  # ID документу в базі для фільтрування лотів
+  filter: "lots/status"
+# ID документу в базі в якому збрегітаються лоти для повторного опрацювання
 errors_doc: 'broken_lots'
+# Таймут роботи консьєржа
 time_to_sleep: 10
-
+# Дані для роботи з лотами
 lots:
+  # Дані api server'a
   api:
+    # Хост на якому доступний сервер АРІ
+    # ЗАЛЕЖНОСТІ:
+    # файл: openregistry.api.ini, секція server:main, параметр: host, port
+    # файл: circus.ini, секція socket:web, параметр: host, port
+    # файл: convoy.yaml, параметр: lots_db.host_url
     url: http://0.0.0.0:6543
+    # Токен для взаємодії з API
+    # ЗАЛЕЖНОСТІ:
+    # файл: auth.ini
     token: concierge
+    # Версія АРІ
+    # ЗАЛЕЖНОСТІ:
+    # файл: convoy.yaml, параметр: lots_db.api_version
     version:  0.1
-
+# Дані для роботи з асетами
 assets:
+  # Дані api server'a
   api:
+    # Хост на якому доступний сервер АРІ
+    # ЗАЛЕЖНОСТІ:
+    # файл: openregistry.api.ini, секція server:main, параметр: host, port
+    # файл: circus.ini, секція socket:web, параметр: host, port
+    # файл: convoy.yaml, параметр: assets_db.host_url
     url: http://0.0.0.0:6543
+    # Токен для взаємодії з API
+    # ЗАЛЕЖНОСТІ:
+    # файл: auth.ini
     token: concierge
+    # Версія АРІ
+    # ЗАЛЕЖНОСТІ:
+    # файл: convoy.yaml, параметр: assets_db.api_version
     version: 0.1
