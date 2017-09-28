@@ -1,0 +1,55 @@
+---
+  timeout: 3
+  transmitter_timeout: 5
+  couchdb:
+    user: ""
+    password: ""
+    host: "127.0.0.1"
+    port: "5984"
+    db: ea_auctions
+  cdb_ds:
+    host_url: "http://127.0.0.1:11111"
+    auth_ds: ["", ""]
+  cdb:
+    key: ""
+    host_url: "http://127.0.0.1:12345"
+    api_version: 2.5
+    user_agent: "auctions_convoy"
+  lots_db:
+    key: "convoy"
+    host_url: "http://0.0.0.0:6543"
+    api_version: 0.1
+    user_agent: "lots_convoy"
+  assets_db:
+    key: "convoy"
+    host_url: "http://0.0.0.0:6543"
+    api_version: 0.1
+    user_agent: "assets_convoy"
+  version: 1
+
+  formatters:
+    simple:
+      format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+
+  handlers:
+    console:
+      class: logging.StreamHandler
+      level: INFO
+      formatter: simple
+      stream: ext://sys.stdout
+
+
+  loggers:
+    openregistry.convoy.convoy:
+      handlers: [console]
+      propagate: no
+      level: DEBUG
+
+    openregistry.convoy.utils:
+      handlers: [console]
+      propagate: no
+      level: DEBUG
+
+    "":
+      handlers: [console]
+      level: DEBUG
