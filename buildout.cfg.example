@@ -2,6 +2,7 @@
 extends =
     profiles/development.cfg
     profiles/templates.cfg
+    profiles/statsd.cfg
 
 [openregistry.api.ini]
 couchdb_db = test
