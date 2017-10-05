@@ -1,4 +1,5 @@
 ---
+version: 1
 db:
  host:  ${options['db_host']}
  name:  ${options['db_name']}
@@ -20,3 +21,30 @@ assets:
     url: ${options['assets_url']}
     token: ${options['assets_secret_token']}
     version: ${options['assets_api_version']}
+
+formatters:
+  simple:
+    format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+
+handlers:
+  console:
+    class: logging.StreamHandler
+    level: INFO
+    formatter: simple
+    stream: ext://sys.stdout
+{% if 'statsd' in options %}
+  statsd:
+    class: statsdhandler.StatsdHandler
+    level: DEBUG
+    config_path: "${options['handler_config']}"
+{% end %}
+
+loggers:
+  openregistry.concierge.worker:
+    handlers: [console${',statsd' if 'statsd' in options else ''}]
+    propagate: no
+    level: DEBUG
+
+  "":
+    handlers: [console${',statsd' if 'statsd' in options else ''}]
+    level: DEBUG
