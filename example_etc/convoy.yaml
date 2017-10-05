@@ -59,6 +59,10 @@
     api_version: 2.5
     # API client header value for 'User-Agent'
     user_agent: "auctions_convoy"
+    # API resource name
+    # DEPENDENCIES:
+    # file auctions_databridge.yaml, var: main.resource
+    resource: "auctions"
   # Params for work with lots
   lots_db:
     # API access token
