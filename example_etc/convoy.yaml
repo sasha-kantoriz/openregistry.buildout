@@ -1,0 +1,125 @@
+---
+  # Convoy timeout (sec.)
+  timeout: 3
+  # Documents transfer timeout (sec.)
+  transmitter_timeout: 5
+  # Params for local database
+  couchdb:
+    # DB server host
+    # DEPENDENCIES:
+    # file: couchdb.ini, var: bind_address
+    # file: concierge.yaml, var: db.host
+    # file: convoy.yaml, var: couchdb.host
+    # file: databridge.yaml, var: couch_url.host
+    # file: openregistry.api.ini, var: 'couchdb.url'
+    host: "127.0.0.1"
+    # DB server port
+    # DEPENDENCIES:
+    # file: couchdb.ini, var: port
+    # file: concierge.yaml, var: db.port
+    # file: convoy.yaml, var: couchdb.port
+    # file: databridge.yaml, var: couch_url.port
+    # file: openregistry.api.ini, var: 'couchdb.url'
+    port: "5984"
+    # DB user
+    # DEPENDENCIES:
+    # file: couchdb.ini
+    # file: concierge.yaml db.login
+    # file: convoy.yaml, var: couchdb.user
+    # file: databridge.yaml, var: couch_url.user
+    # file: openregistry.api.ini, var: 'couchdb.url'
+    user: ""
+    # DB password
+    # DEPENDENCIES:
+    # file: couchdb.ini
+    # file: concierge.yaml db.password
+    # file: convoy.yaml, var: couchdb.password
+    # file: databridge.yaml, var: couch_url.password
+    # file: openregistry.api.ini, var: 'couchdb.url'
+    password: ""
+    # DB name
+    db: ea_auctions
+  # Params for work with document service (DS)
+  cdb_ds:
+    # DS host
+    host_url: "http://127.0.0.1:11111"
+    # Auth params [user, password]
+    auth_ds: ["", ""]
+  # Params for work with CDB API
+  cdb:
+    # API access token
+    key: ""
+    # Host
+    # DEPENDENCIES:
+    # file auctions_databridge.yaml, var: main.resources_api_server
+    host_url: "http://127.0.0.1:12345"
+    # API version
+    # DEPENDENCIES:
+    # file auctions_databridge.yaml, var: main.resources_api_version
+    api_version: 2.5
+    # API client header value for 'User-Agent'
+    user_agent: "auctions_convoy"
+  # Params for work with lots
+  lots_db:
+    # API access token
+    # DEPENDENCIES:
+    # file: auth.ini
+    key: "convoy"
+    # API host
+    # DEPENDENCIES:
+    # file: openregistry.api.ini, section server:main, var: host, port
+    # file: circus.ini, section socket:web, var: host, port
+    # file: concierge.yaml, var: lots.url
+    host_url: "http://0.0.0.0:6543"
+    # API version
+    # DEPENDENCIES:
+    # file: concierge.yaml, var: lots.version
+    api_version: 0.1
+    # API client header value for 'User-Agent'
+    user_agent: "lots_convoy"
+  # Params for work with assets
+  assets_db:
+    # API access token
+    # DEPENDENCIES:
+    # file: auth.ini
+    key: "convoy"
+    # API host
+    # DEPENDENCIES:
+    # file: openregistry.api.ini, section server:main, var: host, port
+    # file: circus.ini, section socket:web, var: host, port
+    # file: concierge.yaml, var: assets.url
+    host_url: "http://0.0.0.0:6543"
+    # API version
+    # DEPENDENCIES:
+    # file: concierge.yaml, var: assets.version
+    api_version: 0.1
+    # API client header value for 'User-Agent'
+    user_agent: "assets_convoy"
+  version: 1
+
+  formatters:
+    simple:
+      format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+
+  handlers:
+    console:
+      class: logging.StreamHandler
+      level: INFO
+      formatter: simple
+      stream: ext://sys.stdout
+
+
+  loggers:
+    openregistry.convoy.convoy:
+      handlers: [console]
+      propagate: no
+      level: DEBUG
+
+    openregistry.convoy.utils:
+      handlers: [console]
+      propagate: no
+      level: DEBUG
+
+    "":
+      handlers: [console]
+      level: DEBUG

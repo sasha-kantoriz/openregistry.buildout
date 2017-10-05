@@ -1,0 +1,123 @@
+main:
+  # API host with auctions
+  resources_api_server: http://127.0.0.1:12345
+  # API version
+  resources_api_version: "2.5"
+  # Server with public data of auctions
+  public_resources_api_server: http://127.0.0.1:12345
+  # Params for local database
+  couch_url:
+    # Server DB host
+    # DEPENDENCIES:
+    # file: couchdb.ini, var: bind_address
+    # file: concierge.yaml, var: db.host
+    # file: convoy.yaml, var: couchdb.host
+    # file: databridge.yaml, var: couch_url.host
+    # file: openregistry.api.ini, var: 'couchdb.url'
+    host: "127.0.0.1"
+    # Server DB port
+    # DEPENDENCIES:
+    # file: couchdb.ini, var: port
+    # file: concierge.yaml, var: db.port
+    # file: convoy.yaml, var: couchdb.port
+    # file: databridge.yaml, var: couch_url.port
+    # file: openregistry.api.ini, var: 'couchdb.url'
+    port: "5984"
+    # DB user
+    # DEPENDENCIES:
+    # file: couchdb.ini
+    # file: concierge.yaml db.login
+    # file: convoy.yaml, var: couchdb.user
+    # file: databridge.yaml, var: couch_url.user
+    # file: openregistry.api.ini, var: 'couchdb.url'
+    user: ""
+    # DB password
+    # DEPENDENCIES:
+    # file: couchdb.ini
+    # file: concierge.yaml db.password
+    # file: convoy.yaml, var: couchdb.password
+    # file: databridge.yaml, var: couch_url.password
+    # file: openregistry.api.ini, var: 'couchdb.url'
+    password: ""
+  # db name
+  db_name: ea_auctions
+  # Increase value (sec.) when unsuccessful response from client
+  client_inc_step_timeout: 0.1
+  # Decrease value (sec.) when successful response from client
+  client_dec_step_timeout: 0.02
+  # Threshold value (sec.) when clear client cookies
+  drop_threshold_client_cookies: 1.5
+  # Timeout (sec.) when main workers idle
+  worker_sleep: 5
+  # Timeout (sec.) when retry workers idle
+  retry_default_timeout: 5
+  # Retries count to process item before him will be skipped
+  retries_count: 10
+  # Queue timeout (sec.) if queue is empty
+  queue_timeout: 5
+  # Queue size threshold (%) when will be spawn new threads,
+  # but not greater than workers_max value
+  workers_inc_threshold: 75
+  # Queue size threshold (%) when will be kill threads,
+  # but not less than workers_min value
+  workers_dec_threshold: 35
+  # Max threads to process main queue
+  workers_max: 1
+  # Min threads to process main queue
+  workers_min: 1
+  # Min threads to process retry queue
+  retry_workers_min: 1
+  # Max threads to process retry queue
+  retry_workers_max: 3
+  # Queue size value, -1 mean unlimited size
+  resource_items_queue_size: 100
+  # Retry queue size value, -1 mean unlimited size
+  retry_resource_items_queue_size: -1
+  # Threads count to process feed
+  filter_workers_count: 1
+  # Interval (sec.) to monitor queue sizes and threads
+  watch_interval: 10
+  # Items count in one response from client, max value is 1000
+  resource_items_limit: 100
+  # Resource name, another possible values: 'contracts', 'plans', 'tenders'
+  resource: auctions
+  # API client header value for 'User-Agent'
+  user_agent: convoy
+  # Bulk size per one request to database
+  bulk_save_limit: 1000
+  # Interval (sec.) between requests to database
+  bulk_save_interval: 3
+  # Max bulk size per query request to database
+  bulk_query_limit: 5000
+  # Interval (sec.) between query requests to database
+  bulk_query_interval: 3
+  # Params to configure api client performance
+  retrievers_params:
+    # Timeout (sec.) between backward requests
+    down_requests_sleep: 10
+    # Timeout (sec.) between forward requests
+    up_requests_sleep: 10
+    # Max timeout (sec.) between forward requests when receive "empty" response
+    up_wait_sleep: 30
+    # Min timeout (sec.) between forward requests when receive "empty" response
+    up_wait_sleep_min: 5
+    # Queue size value for ResourceFeeder
+    queue_size: 1001
+version: 1
+
+formatters:
+  simple:
+    format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+
+handlers:
+  console:
+    class: logging.StreamHandler
+    level: ERROR
+    formatter: simple
+    stream: ext://sys.stdout
+
+loggers:
+  openprocurement.bridge.basic:
+    handlers: [console]
+    propagate: no
+    level: INFO
