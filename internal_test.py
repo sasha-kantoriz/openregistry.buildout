@@ -29,6 +29,9 @@ config = {
 }
 
 # Data for test
+test_asset_basic_data['mode'] = 'test'
+test_lot_data['mode'] = 'test'
+
 test_auction_data = {
     "title": u"футляри до державних нагород",
     "dgfID": u"219560",
