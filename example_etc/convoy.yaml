@@ -111,19 +111,22 @@
       level: INFO
       formatter: simple
       stream: ext://sys.stdout
-
+    statsd:
+      class: statsdhandler.StatsdHandler
+      level: DEBUG
+      config_path: "/path/to/statd/handler.yaml"
 
   loggers:
     openregistry.convoy.convoy:
-      handlers: [console]
+      handlers: [console,statsd]
       propagate: no
       level: DEBUG
 
     openregistry.convoy.utils:
-      handlers: [console]
+      handlers: [console,statsd]
       propagate: no
       level: DEBUG
 
     "":
-      handlers: [console]
+      handlers: [console,statsd]
       level: DEBUG
