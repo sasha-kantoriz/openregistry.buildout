@@ -1,0 +1,14 @@
+main:
+  # Prefix for charts with collected metrics
+  app_key: api
+  # Address of server that listen for application metrics
+  # DEPENDENCIES:
+  # file circus.ini, section: [plugin:statsd]
+  host: localhost
+  port: 8125
+publish_templates:
+  default:
+    - '%(logger)s;%(attr)s;%(metric_name)s'
+# Extra logging keys that should be monitored
+counters:
+  MESSAGE_ID: {}

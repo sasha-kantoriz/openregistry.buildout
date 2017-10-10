@@ -114,7 +114,7 @@
     statsd:
       class: statsdhandler.StatsdHandler
       level: DEBUG
-      config_path: "/path/to/statd/handler.yaml"
+      config_path: "/path/to/buildout_dir/openregistry.buildout/example_etc/statd_api_handler.yaml"
 
   loggers:
     openregistry.convoy.convoy:
