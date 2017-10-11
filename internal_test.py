@@ -218,16 +218,16 @@ class InternalTest(unittest.TestCase):
         # print "Convoy has moved lot to 'active.salable' status and done his work!"
 
         # Move lot to dissolved status ========================================
-        self.lots_client.patch_lot(lot.data.id, {"data": {"status": "dissolved"}}, lot.access.token)
+        self.lots_client.patch_lot(lot.data.id, {"data": {"status": "pending.dissolution"}}, lot.access.token)
         lot_status = self.lots_client.get_lot(lot.data.id).data.status
-        self.assertEqual(lot_status, "dissolved")
+        self.assertEqual(lot_status, "pending.dissolution")
 
-        print "Moved lot to 'dissolved' status"
+        print "Switched lot to 'pending.dissolution' status"
 
-        # Check assets status =================================================
+        # Check assets and lot status =========================================
         self.ensure_resource_status(
-            self.assets_client.get_asset,
-            assets[0].data.id, "pending",
+            self.lots_client.get_lot,
+            lot.data.id, "dissolved",
             waiting_message="Waiting for Concierge ..."
         )
 

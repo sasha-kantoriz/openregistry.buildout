@@ -74,3 +74,28 @@ assets:
     # DEPENDENCIES:
     # file: convoy.yaml, var: assets_db.api_version
     version: 0.1
+
+formatters:
+  simple:
+    format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+
+handlers:
+  console:
+    class: logging.StreamHandler
+    level: INFO
+    formatter: simple
+    stream: ext://sys.stdout
+  statsd:
+    class: statsdhandler.StatsdHandler
+    level: DEBUG
+    config_path: "/path/to/buildout_dir/openregistry.buildout/example_etc/statd_api_handler.yaml"
+
+loggers:
+  openregistry.concierge.worker:
+    handlers: [console,statsd]
+    propagate: no
+    level: DEBUG
+
+  "":
+    handlers: [console,statsd]
+    level: DEBUG

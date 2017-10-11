@@ -59,6 +59,10 @@
     api_version: 2.5
     # API client header value for 'User-Agent'
     user_agent: "auctions_convoy"
+    # API resource name
+    # DEPENDENCIES:
+    # file auctions_databridge.yaml, var: main.resource
+    resource: "auctions"
   # Params for work with lots
   lots_db:
     # API access token
@@ -107,19 +111,22 @@
       level: INFO
       formatter: simple
       stream: ext://sys.stdout
-
+    statsd:
+      class: statsdhandler.StatsdHandler
+      level: DEBUG
+      config_path: "/path/to/buildout_dir/openregistry.buildout/example_etc/statd_api_handler.yaml"
 
   loggers:
     openregistry.convoy.convoy:
-      handlers: [console]
+      handlers: [console,statsd]
       propagate: no
       level: DEBUG
 
     openregistry.convoy.utils:
-      handlers: [console]
+      handlers: [console,statsd]
       propagate: no
       level: DEBUG
 
     "":
-      handlers: [console]
+      handlers: [console,statsd]
       level: DEBUG

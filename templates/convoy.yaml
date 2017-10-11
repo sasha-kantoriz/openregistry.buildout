@@ -38,19 +38,24 @@
       level: INFO
       formatter: simple
       stream: ext://sys.stdout
-
+{% if 'statsd' in options %}
+    statsd:
+      class: statsdhandler.StatsdHandler
+      level: DEBUG
+      config_path: "${options['handler_config']}"
+{% end %}
 
   loggers:
     openregistry.convoy.convoy:
-      handlers: [console]
+      handlers: [console${',statsd' if 'statsd' in options else ''}]
       propagate: no
       level: DEBUG
 
     openregistry.convoy.utils:
-      handlers: [console]
+      handlers: [console${',statsd' if 'statsd' in options else ''}]
       propagate: no
       level: DEBUG
 
     "":
-      handlers: [console]
+      handlers: [console${',statsd' if 'statsd' in options else ''}]
       level: DEBUG

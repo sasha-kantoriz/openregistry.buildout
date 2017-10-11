@@ -50,9 +50,15 @@ handlers:
     level: ERROR
     formatter: simple
     stream: ext://sys.stdout
+{% if 'statsd' in options %}
+  statsd:
+    class: statsdhandler.StatsdHandler
+    level: DEBUG
+    config_path: "${options['handler_config']}"
+{% end %}
 
 loggers:
   openprocurement.bridge.basic:
-    handlers: [console]
+    handlers: [console${',statsd' if 'statsd' in options else ''}]
     propagate: no
-    level: INFO
+    level: DEBUG

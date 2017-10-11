@@ -115,9 +115,13 @@ handlers:
     level: ERROR
     formatter: simple
     stream: ext://sys.stdout
+  statsd:
+    class: statsdhandler.StatsdHandler
+    level: DEBUG
+    config_path: "/path/to/buildout_dir/openregistry.buildout/example_etc/statd_api_handler.yaml"
 
 loggers:
   openprocurement.bridge.basic:
-    handlers: [console]
+    handlers: [console,statsd]
     propagate: no
     level: INFO

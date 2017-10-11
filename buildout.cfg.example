@@ -2,9 +2,11 @@
 extends =
     profiles/development.cfg
     profiles/templates.cfg
+    profiles/statsd.cfg
 
 [openregistry.api.ini]
 couchdb_db = test
+auth_file = ${buildout:directory}/auth.ini.example
 
 [data_bridge_defaults]
 resources_api_version = 0.1
@@ -17,12 +19,12 @@ lots_url = ${data_bridge_defaults:resources_api_server}
 assets_url = ${data_bridge_defaults:resources_api_server}
 lots_api_version = ${data_bridge_defaults:resources_api_version}
 assets_api_version = ${data_bridge_defaults:resources_api_version}
-lot_secret_token =
-assets_secret_token =
+lot_secret_token = concierge
+assets_secret_token = concierge
 
 [convoy.yaml]
-lots_api_key =
-assets_api_key =
+lots_api_key = convoy
+assets_api_key = convoy
 
 [circus.ini]
 webapp = True
