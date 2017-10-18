@@ -26,6 +26,10 @@ config = {
     "url": "http://127.0.0.1:6543",
     "version": 0.1,
     "token": "broker",
+    "ds": {
+        "host_url": "http://127.0.0.1:8008",
+        "auth_ds": ["broker", "9dd52697e3a0433b976d5988aaf693be"]
+    }
 }
 
 # Data for test
@@ -70,12 +74,14 @@ class InternalTest(unittest.TestCase):
         self.lots_client = LotsClient(
             key=config['token'],
             host_url=config['url'],
-            api_version=config['version']
+            api_version=config['version'],
+            ds_config=config['ds']
         )
         self.assets_client = AssetsClient(
             key=config['token'],
             host_url=config['url'],
-            api_version=config['version']
+            api_version=config['version'],
+            ds_config=config['ds']
         )
         # self.auctions_client = APIResourceClient(
         #     resource="auctions",
