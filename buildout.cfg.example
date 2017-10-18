@@ -31,5 +31,3 @@ webapp = True
 databridge = True
 concierge = True
 convoy = True
-# For receiving monitoring data in statsd use statsd_plugin = True
-statsd_plugin = True
