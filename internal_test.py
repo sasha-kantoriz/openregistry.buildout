@@ -2,6 +2,7 @@
 import unittest
 import time
 from datetime import datetime, timedelta
+from StringIO import StringIO
 
 from openprocurement_client.resources.assets import AssetsClient
 from openprocurement_client.resources.lots import LotsClient
@@ -58,6 +59,14 @@ test_auction_data = {
     "procurementMethodType": "dgfInsider",
     "procurementMethodDetails": 'quick, accelerator=1440'
 }
+
+
+def generate_file_obj(file_name, content):
+    file_ = StringIO()
+    file_.name = file_name
+    file_.write(content)
+    file_.seek(0)
+    return file_
 
 
 class InternalTest(unittest.TestCase):
@@ -146,6 +155,16 @@ class InternalTest(unittest.TestCase):
                              "pending")
 
         print "Moved assets to 'pending' status"
+
+        # Create assets' documents
+        doc_file = generate_file_obj('test_document.txt',
+                                     'Test upload resource documents')
+        documents = []
+        for asset in assets:
+            doc = self.assets_client.upload_document(
+                doc_file, asset.data.id, access_token=asset.access['token'])
+            self.assertEqual(doc.data.title, doc_file.name)
+            documents.append(doc)
 
         # Create lot ==========================================================
         test_lot_data['assets'] = [assets[0].data.id,
@@ -236,6 +255,7 @@ class InternalTest(unittest.TestCase):
             lot.data.id, "dissolved",
             waiting_message="Waiting for Concierge ..."
         )
+        print "Concierge has moved lot to 'dissolved' status"
 
         for asset in assets:
             upd_asset = self.assets_client.get_asset(asset.data.id).data
