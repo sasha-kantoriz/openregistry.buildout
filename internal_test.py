@@ -10,7 +10,7 @@ from openprocurement_client.clients import APIResourceClient
 
 from openregistry.api.tests.blanks.json_data import (
     test_organization,
-    test_asset_claimrights_data as test_asset_basic_data,
+    test_asset_basic_data,
     test_lot_data
 )
 
