@@ -5,8 +5,10 @@ main:
   resources_api_version: "0.1"
   # API host with public data
   public_resources_api_server: http://0.0.0.0:6543
-  # Params for local database
-  couch_url:
+  # Local storage possible values: couchdb or elasticsearch
+  storage_db: couchdb
+  # Params needed for establish connection with couchdb or elasticsearch
+  storage:
     # Server DB host
     # DEPENDENCIES:
     # file: couchdb.ini, var: bind_address
@@ -39,8 +41,8 @@ main:
     # file: auctions_databridge.yaml, var: couch_url.password
     # file: openregistry.api.ini, var: 'couchdb.url'
     password: ""
-  # DB name
-  db_name: "lots_db"
+    # DB name
+    db_name: "lots_db"
   # Increase value (sec.) when unsuccessful response from client
   client_inc_step_timeout: 0.1
   # Decrease value (sec.) when successful response from client

@@ -2,12 +2,13 @@ main:
   resources_api_server: ${options['resources_api_server']}
   resources_api_version: "${options['resources_api_version']}"
   public_resources_api_server: ${options['resources_api_server']}
-  couch_url:
+  storage_db: ${options['storage_db']}
+  storage:
     host: ${options['couch_host']}
     port: ${options['couch_port']}
     user: ${options['couch_user']}
     password: ${options['couch_password']}
-  db_name: ${options['public_db']}
+    db_name: ${options['public_db']}
   client_inc_step_timeout: ${options['client_inc_step_timeout']}
   client_dec_step_timeout: ${options['client_dec_step_timeout']}
   drop_threshold_client_cookies: ${options['drop_threshold_client_cookies']}
