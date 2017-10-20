@@ -61,14 +61,6 @@ test_auction_data = {
 }
 
 
-def generate_file_obj(file_name, content):
-    file_ = StringIO()
-    file_.name = file_name
-    file_.write(content)
-    file_.seek(0)
-    return file_
-
-
 class InternalTest(unittest.TestCase):
     '''
         Internal TestCase for openregistry correctness.
@@ -156,15 +148,47 @@ class InternalTest(unittest.TestCase):
 
         print "Moved assets to 'pending' status"
 
-        # Create assets' documents
-        doc_file = generate_file_obj('test_document.txt',
-                                     'Test upload resource documents')
+        # Create assets' documents ============================================
         documents = []
+
         for asset in assets:
+            file_ = StringIO()
+            file_.name = 'test_document.txt'
+            file_.write('Test upload resource documents')
+            file_.seek(0)
+
             doc = self.assets_client.upload_document(
-                doc_file, asset.data.id, access_token=asset.access['token'])
-            self.assertEqual(doc.data.title, doc_file.name)
+                file_, asset.data.id, access_token=asset.access['token'])
+            self.assertEqual(doc.data.title, file_.name)
+            self.assertEqual(doc.data, self.assets_client.get_asset(asset.data.id).data['documents'][0])
             documents.append(doc)
+
+        print "Successfully added assets' documents"
+
+        # Update assets' documents ============================================
+        for i, asset in enumerate(assets):
+            file_ = StringIO()
+            file_.name = 'test_document.txt'
+            file_.write('Test update asset documents')
+            file_.seek(0)
+
+            doc = self.assets_client.update_document(
+                file_, asset.data.id, documents[i].data.id,
+                access_token=asset.access['token'])
+            self.assertEqual(doc.data.title, file_.name)
+            self.assertEqual(doc.data, self.assets_client.get_asset(asset.data.id).data['documents'][0])
+
+        print "Successfully updated assets' documents"
+
+        # Patch assets' documents =============================================
+        for i, asset in enumerate(assets):
+            doc = self.assets_client.patch_document(
+                asset.data.id, {'data': {'title': 'test_asset_document.txt'}},
+                documents[i].data.id, access_token=asset.access['token'])
+            self.assertEqual(doc.data.title, 'test_asset_document.txt')
+            self.assertEqual(doc.data, self.assets_client.get_asset(asset.data.id).data['documents'][0])
+
+        print "Successfully patched assets' documents"
 
         # Create lot ==========================================================
         test_lot_data['assets'] = [assets[0].data.id,
