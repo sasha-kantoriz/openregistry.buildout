@@ -176,7 +176,7 @@ class InternalTest(unittest.TestCase):
                 file_, asset.data.id, documents[i].data.id,
                 access_token=asset.access['token'])
             self.assertEqual(doc.data.title, file_.name)
-            self.assertEqual(doc.data, self.assets_client.get_asset(asset.data.id).data['documents'][0])
+            self.assertEqual(doc.data, self.assets_client.get_asset(asset.data.id).data['documents'][-1])
 
         print "Successfully updated assets' documents"
 
@@ -186,7 +186,7 @@ class InternalTest(unittest.TestCase):
                 asset.data.id, {'data': {'title': 'test_asset_document.txt'}},
                 documents[i].data.id, access_token=asset.access['token'])
             self.assertEqual(doc.data.title, 'test_asset_document.txt')
-            self.assertEqual(doc.data, self.assets_client.get_asset(asset.data.id).data['documents'][0])
+            self.assertEqual(doc.data, self.assets_client.get_asset(asset.data.id).data['documents'][-1])
 
         print "Successfully patched assets' documents"
 
@@ -205,6 +205,42 @@ class InternalTest(unittest.TestCase):
         self.assertEqual(self.lots_client.get_lot(lot.data.id).data.status, "pending")
 
         print "Moved lot to 'pending' status"
+
+        # Create lot document =================================================
+        file_ = StringIO()
+        file_.name = 'test_document.txt'
+        file_.write('Test upload resource documents')
+        file_.seek(0)
+
+        doc = self.lots_client.upload_document(
+            file_, lot.data.id, access_token=lot.access['token'])
+        self.assertEqual(doc.data.title, file_.name)
+        self.assertEqual(doc.data, self.lots_client.get_lot(lot.data.id).data['documents'][0])
+
+        print "Successfully added lot document"
+
+        # Update lot document =================================================
+        file_ = StringIO()
+        file_.name = 'test_document.txt'
+        file_.write('Test update lot documents')
+        file_.seek(0)
+
+        doc = self.lots_client.update_document(
+            file_, lot.data.id, doc.data.id,
+            access_token=lot.access['token'])
+        self.assertEqual(doc.data.title, file_.name)
+        self.assertEqual(doc.data, self.lots_client.get_lot(lot.data.id).data['documents'][-1])
+
+        print "Successfully updated lot document"
+
+        # Patch lot document =================================================
+        doc = self.lots_client.patch_document(
+            lot.data.id, {'data': {'title': 'test_lot_document.txt'}},
+            doc.data.id, access_token=lot.access['token'])
+        self.assertEqual(doc.data.title, 'test_lot_document.txt')
+        self.assertEqual(doc.data, self.lots_client.get_lot(lot.data.id).data['documents'][-1])
+
+        print "Successfully patched lot document"
 
         # Move lot to Verification ============================================
         self.lots_client.patch_lot(lot.data.id, {"data": {"status": "verification"}}, lot.access.token)
