@@ -11,6 +11,8 @@ from openprocurement_client.clients import APIResourceClient
 from openregistry.api.tests.blanks.json_data import (
     test_organization,
     test_asset_basic_data,
+    test_asset_compound_data,
+    test_asset_claimrights_data,
     test_lot_data
 )
 
@@ -116,7 +118,7 @@ class InternalTest(unittest.TestCase):
 
     def test_01_general_workflow(self):
         '''
-            Create two assets and move them to pending status
+            Create 3 assets and move them to pending status
             Create lot with this assets and move to verification status
             Create procedure from lot
             Check auction is unsuccessful and lot is active.salable
@@ -129,15 +131,16 @@ class InternalTest(unittest.TestCase):
             "data": test_asset_basic_data
         }))
         assets.append(self.assets_client.create_resource_item({
-            "data": test_asset_basic_data
+            "data": test_asset_compound_data
         }))
-        self.assertNotEqual(assets[0].data.id,
-                            assets[1].data.id)
-        self.assertEqual(assets[0].data.status, 'draft')
-        self.assertEqual(assets[1].data.status, 'draft')
+        assets.append(self.assets_client.create_resource_item({
+            "data": test_asset_claimrights_data
+        }))
 
-        print "Successfully created assets [{}, {}]".format(assets[0].data.id,
-                                                            assets[1].data.id)
+        for asset in assets:
+            self.assertEqual(asset.data.status, 'draft')
+
+        print "Successfully created assets [{}]".format(','.join(a.data.id for a in assets))
 
         # Move assets to pending ==============================================
         for asset in assets:
@@ -191,12 +194,13 @@ class InternalTest(unittest.TestCase):
         print "Successfully patched assets' documents"
 
         # Create lot ==========================================================
-        test_lot_data['assets'] = [assets[0].data.id,
-                                   assets[1].data.id]
+        assets_id = [asset.data.id for asset in assets]
+        test_lot_data['assets'] = assets_id
         lot = self.lots_client.create_resource_item({
             "data": test_lot_data
         })
         self.assertEqual(lot.data.status, 'draft')
+        self.assertEqual(lot.data.assets, assets_id)
 
         print "Successfully created lot [{}]".format(lot.data.id)
 
